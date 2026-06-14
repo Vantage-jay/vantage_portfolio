@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vantage — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Lora:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --rust: #c0390b;
+    --gold: #c8962e;
+    --muted: #7a7060;
+    --line: rgba(13,13,13,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.6;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 2rem clamp(1.5rem, 6vw, 6rem);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: 'W';
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-56%);
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22rem, 40vw, 42rem);
+    font-weight: 800;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(13,13,13,0.06);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .hero-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 0 2rem;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.2rem, 10vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    max-width: 480px;
+    margin-top: 2.5rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    animation: fadeUp 0.7s 0.35s ease both;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2rem;
+    animation: fadeUp 0.7s 0.45s ease both;
+  }
+
+  .badge {
+    border: 1px solid var(--line);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-radius: 2px;
+  }
+
+  .badge.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .hero-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 0.5rem;
+    animation: fadeUp 0.7s 0.55s ease both;
+  }
+
+  .hero-location {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .scroll-hint {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .scroll-hint::before {
+    content: '';
+    width: 1px;
+    height: 2.5rem;
+    background: var(--muted);
+    display: block;
+    animation: lineGrow 1s 1s ease both;
+  }
+
+  /* SECTIONS */
+  section {
+    padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    max-width: 120px;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .about-text p strong { color: var(--ink); }
+
+  .about-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-top: 1rem;
+  }
+
+  .stat {
+    border-left: 2px solid var(--gold);
+    padding-left: 1.5rem;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  /* PROJECTS */
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .project-item {
+    display: grid;
+    grid-template-columns: 3rem 1fr auto;
+    align-items: start;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--line);
+    cursor: default;
+    transition: background 0.2s;
+  }
+
+  .project-item:hover { background: rgba(13,13,13,0.02); }
+  .project-item:first-child { border-top: 1px solid var(--line); }
+
+  .project-num {
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding-top: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.82rem;
+    max-width: 480px;
+  }
+
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .tag {
+    font-size: 0.62rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .project-status {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 0.2rem;
+    white-space: nowrap;
+  }
+
+  .project-status.live { color: #2d7a3a; }
+  .project-status.wip { color: var(--gold); }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .skill-group h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .skill-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .skill-list li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--rust);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* CONTACT */
+  .contact-inner {
+    max-width: 640px;
+  }
+
+  .contact-inner h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-inner h2 em {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold);
+  }
+
+  .contact-inner p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .contact-link:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .contact-link.primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .contact-link.primary:hover {
+    background: var(--rust);
+    border-color: var(--rust);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem clamp(1.5rem, 6vw, 6rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer p {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes lineGrow {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .project-item { grid-template-columns: 2.5rem 1fr; }
+    .project-status { display: none; }
+    nav { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .hero::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <nav>
+    <span class="nav-logo">Vantage</span>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero-body">
+    <p class="hero-eyebrow">Information Systems · FUNAAB · Class of 2029</p>
+    <h1>Builder.<br><em>Writer.</em><br>Web3 Native.</h1>
+    <p class="hero-sub">I build digital products from a phone — e-commerce stores, web apps, and community tools — while studying how systems think. Currently campus ambassador at Cowrywise &amp; Fremack Academy.</p>
+    <div class="hero-badges">
+      <span class="badge active">Frontend Dev</span>
+      <span class="badge active">Web3</span>
+      <span class="badge">Creative Writing</span>
+      <span class="badge">Open to Opportunities</span>
+    </div>
+  </div>
+
+  <div class="hero-footer">
+    <span class="hero-location">📍 Abeokuta, Nigeria</span>
+    <span class="scroll-hint">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label reveal">About</p>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <h2>I build things that work. From mobile.</h2>
+      <p>I'm a <strong>100-level Information Systems student</strong> at the Federal University of Agriculture, Abeokuta (FUNAAB), with a graduation target of 2029. Most of my development happens on an Android device — Acode and Termux are my IDE and terminal.</p>
+      <p>My stack centers on <strong>Next.js, TypeScript, Tailwind CSS, Framer Motion, and Zustand</strong> — tools I use to build production-grade projects for clients and myself. I deploy on Vercel and integrate backends with Supabase and Firebase.</p>
+      <p>Beyond code, I write poetry and prose with a focus on showing rather than telling. I'm also active in <strong>Web3 ecosystem communities</strong>, contributing to campaigns for NFT projects and DeFi platforms on X (Twitter).</p>
+    </div>
+    <div class="about-stats reveal">
+      <div class="stat">
+        <div class="stat-num">3+</div>
+        <div class="stat-label">Live / Active Projects</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Campus Ambassador Roles</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Mobile Dev Setup</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label reveal">Selected Projects</p>
+  <div class="projects-list">
+
+    <div class="project-item reveal">
+      <span class="project-num">01</span>
+      <div>
+        <div class="project-name">BrimBT Design</div>
+        <p class="project-desc">Premium bodywear &amp; footwear e-commerce store for a client. Currently building frontend pages before Supabase backend integration.</p>
+        <div class="project-stack">
+          <span class="tag">Next.js 15</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Tailwind CSS</span>
+          <span class="tag">Framer Motion</span>
+          <span class="tag">Zustand</span>
+          <span class="tag">Vercel</span>
+        </div>
+      </div>
+      <span class="project-status wip">In Progress</span>
+    </div>
+
+    <div class="project-item reveal">
+      <span class="project-num">02</span>
+      <div>
+        <div class="project-name">FarmFresh</div>
+        <p class="project-desc">Farm produce e-commerce site with WhatsApp checkout, cart &amp; auth, profile with editable delivery addresses, category filters, and Vercel Analytics.</p>
+        <div class="project-stack">
+          <span class="tag">HTML/CSS/JS</span>
+          <span class="tag">Firebase (planned)</span>
+          <span class="tag">Vercel</span>
+          <span class="tag">Vercel Analytics</span>
+        </div>
+      </div>
+      <span class="project-status live">Live</span>
+    </div>
+
+    <div class="project-item reveal">
+      <span class="project-num">03</span>
+      <div>
+        <div class="project-name">Schedule Planner</div>
+        <p class="project-desc">Personal productivity app with a long-term vision of evolving into an AI personal assistant. Built with React + Vite and Google OAuth.</p>
+        <div class="project-stack">
+          <span class="tag">React + Vite</span>
+          <span class="tag">Node.js / Express</span>
+          <span class="tag">Firebase Firestore</span>
+          <span class="tag">Google OAuth</span>
+        </div>
+      </div>
+      <span class="project-status wip">In Progress</span>
+    </div>
+
+    <div class="project-item reveal">
+      <span class="project-num">04</span>
+      <div>
+        <div class="project-name">Portfolio Website</div>
+        <p class="project-desc">Personal portfolio with a custom SVG "W" logo built from scratch on svgviewer.dev, integrated into a React component.</p>
+        <div class="project-stack">
+          <span class="tag">React</span>
+          <span class="tag">SVG</span>
+          <span class="tag">Tailwind CSS</span>
+        </div>
+      </div>
+      <span class="project-status wip">In Progress</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label reveal">Skills &amp; Tools</p>
+  <div class="skills-grid">
+    <div class="skill-group reveal">
+      <h3>Frontend</h3>
+      <ul class="skill-list">
+        <li>Next.js 15 / React</li>
+        <li>TypeScript</li>
+        <li>Tailwind CSS</li>
+        <li>Framer Motion</li>
+        <li>Zustand (state management)</li>
+        <li>HTML / CSS / Vanilla JS</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal">
+      <h3>Backend &amp; Infra</h3>
+      <ul class="skill-list">
+        <li>Supabase</li>
+        <li>Firebase / Firestore</li>
+        <li>Node.js / Express</li>
+        <li>Google OAuth</li>
+        <li>Vercel (deployment)</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal">
+      <h3>Web3 &amp; Community</h3>
+      <ul class="skill-list">
+        <li>Ecosystem campaign writing</li>
+        <li>NFT community engagement</li>
+        <li>DeFi platform participation</li>
+        <li>X (Twitter) content strategy</li>
+        <li>Cowrywise Campus Ambassador</li>
+        <li>Fremack Academy Ambassador</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal">
+      <h3>Dev Environment</h3>
+      <ul class="skill-list">
+        <li>Acode (mobile IDE)</li>
+        <li>Termux (mobile terminal)</li>
+        <li>Git / GitHub</li>
+        <li>SVG design (svgviewer.dev)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label reveal">Get in Touch</p>
+  <div class="contact-inner reveal">
+    <h2>Let's build something <em>real.</em></h2>
+    <p>I'm open to freelance projects, internship opportunities, and Web3 collaborations. If you need a frontend developer who actually ships, reach out.</p>
+    <div class="contact-links">
+      <a href="https://github.com/vantage" class="contact-link primary" target="_blank">GitHub</a>
+      <a href="https://twitter.com" class="contact-link" target="_blank">X (Twitter)</a>
+      <a href="mailto:vantage@email.com" class="contact-link">Email</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Vantage · Built with intention, deployed on Vercel.</p>
+  <p>FUNAAB · Information Systems · Class of 2029</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
